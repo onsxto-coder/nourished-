@@ -186,7 +186,7 @@ function renderResults() {
 function renderChips() {
   $('#rf-sources').replaceChildren(...[{ id: 'all', name: 'All collections' }, ...SOURCES].map((s) =>
     h('button', {
-      type: 'button', class: 'chip', role: 'radio', 'aria-checked': String(!state.topic && state.source === s.id),
+      type: 'button', class: 'chip', 'aria-pressed': String(!state.topic && state.source === s.id),
       onclick: () => { state.source = s.id; state.topic = null; renderChips(); load(true); },
     }, s.name)));
   $('#rf-topics').replaceChildren(...TOPICS.map((t) =>
