@@ -150,6 +150,8 @@
             </figure>
           </div>
 
+          <div class="ov-book" id="ov-book" hidden></div>
+
           <section class="today" id="ov-today" aria-labelledby="today-title"></section>
 
           <section class="start" aria-labelledby="start-title">
@@ -216,6 +218,14 @@
                 </fieldset>
               </div>
 
+              <fieldset class="seg">
+                <legend>Focus</legend>
+                <div class="seg-options">
+                  <label><input type="radio" name="mode" value="everyday" checked><span>Everyday</span></label>
+                  <label><input type="radio" name="mode" value="fitness"><span>Fitness</span></label>
+                </div>
+              </fieldset>
+
               <div class="row-3">
                 <div class="field">
                   <label for="c-age">Age</label>
@@ -247,12 +257,23 @@
                 <div class="choice-list" id="c-activity"></div>
               </fieldset>
 
-              <fieldset class="seg">
+              <fieldset class="seg" data-mode="everyday">
                 <legend>Goal</legend>
                 <div class="seg-options seg-3" id="c-goal"></div>
               </fieldset>
 
-              <fieldset class="choices">
+              <fieldset class="seg" data-mode="fitness" hidden>
+                <legend>Fitness goal</legend>
+                <div class="seg-options seg-3" id="c-fitgoal"></div>
+                <p class="fine">Protein is set per kilogram of body weight: 2.0 g to lose fat, 1.6 g to maintain and 1.8 g to build muscle. Losing fat takes about 15% off your maintenance energy, and building muscle adds about 10%.</p>
+              </fieldset>
+
+              <fieldset class="choices" data-mode="fitness" hidden>
+                <legend>Plate</legend>
+                <div class="choice-list choice-list-inline choice-list-2" id="c-fitplate"></div>
+              </fieldset>
+
+              <fieldset class="choices" data-mode="everyday">
                 <legend>Plate balance</legend>
                 <div class="choice-list choice-list-inline" id="c-balance"></div>
                 <p class="fine">All three stay within the widely used ranges: carbohydrates 45–65%, protein 10–35% and fat 20–35% of energy.</p>
@@ -270,7 +291,7 @@
               </div>
             </aside>
           </div>
-          <p class="disclaimer">These are estimates for healthy adults. If you are pregnant or breastfeeding, under 18, an athlete in training, or managing a health condition, please speak with your doctor or a dietitian. <a href="#method">See how it works</a></p>
+          <p class="disclaimer">These are estimates for healthy adults. If you are pregnant or breastfeeding, under 18, preparing for competition, or managing a health condition, please speak with your doctor or a dietitian. <a href="#method">See how it works</a></p>
         </div>
       </section>
 
@@ -296,6 +317,7 @@
             <div class="chips chips-scroll" role="group" aria-labelledby="rf-topics-label" id="rf-topics"></div>
           </div>
 
+          <div class="rf-book" id="rf-book" hidden></div>
           <p class="status" id="rf-status" role="status" aria-live="polite"></p>
           <ul class="recipe-grid" id="rf-results"></ul>
           <div class="center"><button class="btn btn-secondary" type="button" id="rf-more" hidden>Show more recipes</button></div>
@@ -468,6 +490,8 @@
               <p>Soups, stews and braises often taste better the next day. Save the recipe, add it to tonight's dinner, then copy the day forward so tomorrow's lunch is already planned.</p>
               <h2>Read labels per 100 g</h2>
               <p>Compare per 100 g, not per pack or per serving, and match raw to raw and cooked to cooked. Rice, pasta and meat change weight a lot as they cook.</p>
+              <h2>If you train</h2>
+              <p>Switch your targets to fitness mode. Spread your protein over three or four meals instead of saving it for dinner, and put more of your carbohydrates around training. On low-carb days, keep vegetables at half the plate so the fibre stays.</p>
               <h2>Be kind with the numbers</h2>
               <p>Every figure here is an estimate. Use it to notice patterns across a week, not to judge a single meal. If a number worries you, talk it through with your doctor or a dietitian.</p>
             </article>
@@ -495,6 +519,8 @@
             <p>That figure is multiplied by an activity factor to estimate the energy you use in a day: 1.2 (mostly sitting), 1.375 (lightly active), 1.55 (moderately active), 1.725 (very active) or 1.9 (extra active). A gentle loss goal takes away 10%, a gentle gain goal adds 10%, and the target never drops below your resting energy. Results are rounded to the nearest 10 kcal.</p>
             <h3>Macros</h3>
             <p>Your plate balance splits the energy between carbohydrates, protein and fat, then converts it to grams at 4 kcal per gram of carbohydrate or protein and 9 kcal per gram of fat.</p>
+            <h3>Fitness mode</h3>
+            <p>Fitness mode sets protein by body weight instead of as a share of energy: 2.0 g per kilogram to lose fat, 1.6 g to maintain and 1.8 g to build muscle, never more than 40% of the day's energy. Losing fat takes 15% off your maintenance energy and building muscle adds 10%. On the balanced plate, fat is 25% of energy and carbohydrates make up the rest. On the low-carb plate, carbohydrates are 25% of energy and fat makes up the rest.</p>
             <h3>BMI</h3>
             <p>BMI is weight in kilograms divided by height in metres squared. nourished shows two readings. The Asian guideline used in Singapore puts 18.5–22.9 as the healthy range, 23–27.4 as moderate risk and 27.5 or above as high risk. The WHO international ranges are 18.5–24.9 healthy, 25–29.9 overweight and 30 or above obesity. BMI doesn't measure body fat or muscle, so treat it as one signal among many.</p>
             <h3>Recipe nutrition</h3>

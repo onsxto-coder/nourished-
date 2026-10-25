@@ -4,6 +4,7 @@
 import * as store from './store.js';
 import { $, h, fmt, toast, openDialog, confirmDialog, textFromHtml } from './ui.js';
 import { openAddToPlan } from './planner.js';
+import { lowCarbBookCard } from './books.js';
 
 export const SOURCES = [
   { id: 'sixto', name: 'Sixto Carreon', endpoint: 'https://sixtocarreon.com/wp-json/wp/v2/posts', base: { categories: '2592' } },
@@ -189,12 +190,19 @@ function renderChips() {
       type: 'button', class: 'chip', 'aria-pressed': String(!state.topic && state.source === s.id),
       onclick: () => { state.source = s.id; state.topic = null; renderChips(); load(true); },
     }, s.name)));
-  $('#rf-topics').replaceChildren(...TOPICS.map((t) =>
+  // people in fitness mode see high-protein and low-carb first
+  const fit = store.get().profile?.mode === 'fitness';
+  const topics = fit ? [...TOPICS].sort((a, b) => rank(a) - rank(b)) : TOPICS;
+  $('#rf-topics').replaceChildren(...topics.map((t) =>
     h('button', {
       type: 'button', class: 'chip', 'aria-pressed': String(state.topic === t.id),
       onclick: () => { state.topic = state.topic === t.id ? null : t.id; if (state.topic) state.source = 'sixto'; renderChips(); load(true); },
     }, t.label)));
+  const book = $('#rf-book');
+  book.hidden = state.topic !== 'lowcarb';
+  book.replaceChildren(...(state.topic === 'lowcarb' ? [lowCarbBookCard('More low-carb cooking')] : []));
 }
+const rank = (t) => ({ protein: 0, lowcarb: 1 }[t.id] ?? 2);
 
 // ---------- recipe dialog ----------
 export function openRecipe(item) {
@@ -308,6 +316,7 @@ export function initFinder() {
   renderChips();
   renderSaved();
   store.subscribe(renderSaved);
+  store.subscribe(renderChips);
   $('#rf-form').addEventListener('submit', (e) => {
     e.preventDefault();
     load(true);

@@ -8,6 +8,7 @@ import { initCalculator, savedTargets } from './calculator.js';
 import { initFinder, showFinder } from './recipes.js';
 import { initLab } from './lab.js';
 import { initPlanner, showPlanner, dayTotals } from './planner.js';
+import { lowCarbBookCard } from './books.js';
 
 const BLOG_ID = '252215067'; // sixtocarreon.com on WordPress.com
 const VIEWS = {
@@ -175,7 +176,10 @@ function renderOverview() {
     small: 'kcal a day',
     label: `${fmt.int(t.kcal)} kcal a day: ${t.carbs} g carbohydrates, ${t.protein} g protein, ${t.fat} g fat`,
   });
-  $('#ov-plate-title').textContent = mine ? 'Your daily targets' : 'Your daily starting point';
+  $('#ov-plate-title').textContent = !mine ? 'Your daily starting point' : mine.mode === 'fitness' ? 'Your fitness targets' : 'Your daily targets';
+  const book = $('#ov-book');
+  book.hidden = !mine?.lowCarb;
+  book.replaceChildren(...(mine?.lowCarb ? [lowCarbBookCard('Cooking low carb?')] : []));
   const cap = $('#ov-plate-cap');
   if (mine) {
     cap.replaceChildren(`Protein ${t.protein} g · carbs ${t.carbs} g · fat ${t.fat} g. `, h('a', { href: '#calculator', text: 'Update' }));

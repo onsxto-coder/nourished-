@@ -3,10 +3,11 @@
 import * as store from './store.js';
 import { $, $$, h, fmt, num, toast } from './ui.js';
 import {
-  ACTIVITY, GOALS, BALANCES, EXAMPLE_PROFILE, validate, computeTargets,
+  ACTIVITY, GOALS, BALANCES, FITNESS_GOALS, FITNESS_PLATES, EXAMPLE_PROFILE, validate, computeTargets,
   kgToLb, lbToKg, cmToFtIn, ftInToCm,
 } from './calc.js';
 import { renderPlate, partsFromGrams } from './plate.js';
+import { lowCarbBookCard } from './books.js';
 
 const form = () => $('#calc-form');
 
@@ -23,12 +24,19 @@ export function initCalculator() {
       h('input', { type: 'radio', name: 'balance', value: b.id }),
       h('span', { class: 'choice-body' }, h('strong', { text: b.label }),
         h('small', { text: `Carbs ${b.carbs}% · protein ${b.protein}% · fat ${b.fat}%` })))));
+  $('#c-fitgoal').replaceChildren(...FITNESS_GOALS.map((g) =>
+    h('label', {}, h('input', { type: 'radio', name: 'fitGoal', value: g.id }), h('span', { text: g.label }))));
+  $('#c-fitplate').replaceChildren(...FITNESS_PLATES.map((b) =>
+    h('label', { class: 'choice' },
+      h('input', { type: 'radio', name: 'fitPlate', value: b.id }),
+      h('span', { class: 'choice-body' }, h('strong', { text: b.label }), h('small', { text: b.desc })))));
 
   fillForm(store.get().profile || EXAMPLE_PROFILE);
 
   form().addEventListener('input', onInput);
   form().addEventListener('change', (e) => {
     if (e.target.name === 'units') switchUnits(e.target.value);
+    if (e.target.name === 'mode') showMode(e.target.value);
     onInput();
   });
   $('#save-targets').addEventListener('click', saveTargets);
@@ -42,9 +50,17 @@ function fillForm(p) {
   f.elements.activity.value = p.activity || 'moderate';
   f.elements.goal.value = p.goal || 'maintain';
   f.elements.balance.value = p.balance || 'balanced';
+  f.elements.mode.value = p.mode || 'everyday';
+  f.elements.fitGoal.value = p.fitGoal || 'maintain';
+  f.elements.fitPlate.value = p.fitPlate || 'balanced';
   $('#c-age').value = p.age ?? '';
   setBody(p.heightCm, p.weightKg);
   showUnits(f.elements.units.value);
+  showMode(f.elements.mode.value);
+}
+
+function showMode(mode) {
+  $$('[data-mode]', form()).forEach((el) => { el.hidden = el.dataset.mode !== mode; });
 }
 
 function setBody(cm, kg) {
@@ -80,6 +96,9 @@ export function readForm(unitsOverride) {
     activity: f.elements.activity.value,
     goal: f.elements.goal.value,
     balance: f.elements.balance.value,
+    mode: f.elements.mode.value,
+    fitGoal: f.elements.fitGoal.value,
+    fitPlate: f.elements.fitPlate.value,
   };
 }
 
@@ -125,9 +144,13 @@ function renderResults(t, p) {
     h('dt', { text: 'Maintenance' }), h('dd', { text: fmt.kcal(t.maintenance) }),
     h('dt', { text: 'Protein per kg' }), h('dd', { text: `${fmt.one(t.proteinPerKg)} g` }));
 
-  const note = t.flooredAtBmr
-    ? h('p', { class: 'fine', style: 'margin-top:10px', text: 'Your target is held at your resting energy, the lowest it should go without professional advice.' })
-    : null;
+  const notes = [];
+  if (t.flooredAtBmr) notes.push(h('p', { class: 'fine', style: 'margin-top:10px', text: 'Your target is held at your resting energy, the lowest it should go without professional advice.' }));
+  if (t.mode === 'fitness') {
+    const perMeal = Math.round(t.protein / 4 / 5) * 5;
+    notes.push(h('p', { class: 'fine', style: 'margin-top:10px', text: `Spread your protein over three or four meals, about ${perMeal}–${Math.round(t.protein / 3 / 5) * 5} g each, and put more of your carbohydrates around training.` }));
+  }
+  if (t.lowCarb) notes.push(lowCarbBookCard());
 
   const bmiV = t.bmi.value;
   const pos = Math.min(100, Math.max(0, ((bmiV - 15) / (35 - 15)) * 100));
@@ -149,7 +172,7 @@ function renderResults(t, p) {
       h('dt', { text: 'WHO international' }), h('dd', { text: t.bmi.who }),
       h('dt', { text: 'Healthy range for your height' }), h('dd', { text: range })));
 
-  $('#calc-results').replaceChildren(legend, energy, ...(note ? [note] : []), bmiBlock);
+  $('#calc-results').replaceChildren(legend, energy, ...notes, bmiBlock);
 }
 
 function legendRow(key, label, grams, pct) {
@@ -166,14 +189,14 @@ function saveTargets() {
     s.profile = { ...p, savedAt: new Date().toISOString() };
   });
   markSaved();
-  toast(`Saved: ${fmt.int(t.kcal)} kcal a day.`, { href: '#planner', label: 'Plan my meals' });
+  toast(`Saved: ${fmt.int(t.kcal)} kcal a day${t.mode === 'fitness' ? `, ${t.protein} g protein` : ''}.`, { href: '#planner', label: 'Plan my meals' });
 }
 
 function markSaved() {
   const saved = store.get().profile;
   const btn = $('#save-targets');
   if (!saved || !lastValid) { btn.textContent = 'Save as my targets'; return; }
-  const same = ['sex', 'age', 'activity', 'goal', 'balance'].every((k) => saved[k] === lastValid.p[k])
+  const same = ['sex', 'age', 'activity', 'goal', 'balance', 'mode', 'fitGoal', 'fitPlate'].every((k) => (saved[k] || '') === (lastValid.p[k] || ''))
     && Math.abs(saved.heightCm - lastValid.p.heightCm) < 0.3 && Math.abs(saved.weightKg - lastValid.p.weightKg) < 0.1;
   btn.textContent = same ? 'Saved as my targets' : 'Update my targets';
 }

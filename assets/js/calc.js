@@ -20,6 +20,23 @@ export const BALANCES = [
   { id: 'lighter', label: 'Lighter on carbs', carbs: 45, protein: 20, fat: 35 },
 ];
 
+export const MODES = [
+  { id: 'everyday', label: 'Everyday' },
+  { id: 'fitness', label: 'Fitness' },
+];
+
+// Fitness mode sets protein per kilogram of body weight.
+export const FITNESS_GOALS = [
+  { id: 'cut', label: 'Lose fat', factor: 0.85, proteinPerKg: 2.0 },
+  { id: 'maintain', label: 'Maintain', factor: 1, proteinPerKg: 1.6 },
+  { id: 'build', label: 'Build muscle', factor: 1.1, proteinPerKg: 1.8 },
+];
+
+export const FITNESS_PLATES = [
+  { id: 'balanced', label: 'Balanced', desc: 'Fat at 25% of energy, the rest from carbohydrates', fat: 25 },
+  { id: 'lowcarb', label: 'Low carb', desc: 'Carbohydrates at 25% of energy, the rest from fat', carbs: 25 },
+];
+
 /** The illustrative profile shown before someone saves their own targets. */
 export const EXAMPLE_PROFILE = {
   units: 'metric', sex: 'male', age: 35, heightCm: 170, weightKg: 70,
@@ -42,9 +59,11 @@ export function bmrMifflin({ sex, age, heightCm, weightKg }) {
 }
 
 export function computeTargets(p) {
+  const fitness = p.mode === 'fitness';
   const activity = ACTIVITY.find((a) => a.id === p.activity) || ACTIVITY[2];
-  const goal = GOALS.find((g) => g.id === p.goal) || GOALS[1];
-  const balance = BALANCES.find((b) => b.id === p.balance) || BALANCES[0];
+  const goal = fitness
+    ? FITNESS_GOALS.find((g) => g.id === p.fitGoal) || FITNESS_GOALS[1]
+    : GOALS.find((g) => g.id === p.goal) || GOALS[1];
 
   const bmr = bmrMifflin(p);
   const maintenance = bmr * activity.factor;
@@ -53,15 +72,35 @@ export function computeTargets(p) {
   if (flooredAtBmr) kcal = bmr;
   kcal = Math.round(kcal / 10) * 10;
 
-  const protein = Math.round((kcal * balance.protein) / 100 / 4);
-  const carbs = Math.round((kcal * balance.carbs) / 100 / 4);
-  const fat = Math.round((kcal * balance.fat) / 100 / 9);
+  let protein; let carbs; let fat; let balance; let lowCarb = false;
+  if (fitness) {
+    const plate = FITNESS_PLATES.find((x) => x.id === p.fitPlate) || FITNESS_PLATES[0];
+    // protein per kg, never more than 40% of the day's energy
+    protein = Math.min(Math.round(goal.proteinPerKg * p.weightKg), Math.round((kcal * 0.4) / 4));
+    if (plate.id === 'lowcarb') {
+      lowCarb = true;
+      carbs = Math.round((kcal * plate.carbs) / 100 / 4);
+      fat = Math.max(0, Math.round((kcal - protein * 4 - carbs * 4) / 9));
+    } else {
+      fat = Math.round((kcal * plate.fat) / 100 / 9);
+      carbs = Math.max(0, Math.round((kcal - protein * 4 - fat * 9) / 4));
+    }
+    const pct = (e) => Math.round((e / kcal) * 100);
+    balance = { id: plate.id, label: plate.label, carbs: pct(carbs * 4), protein: pct(protein * 4), fat: pct(fat * 9) };
+  } else {
+    balance = BALANCES.find((b) => b.id === p.balance) || BALANCES[0];
+    protein = Math.round((kcal * balance.protein) / 100 / 4);
+    carbs = Math.round((kcal * balance.carbs) / 100 / 4);
+    fat = Math.round((kcal * balance.fat) / 100 / 9);
+  }
 
   return {
     kcal, protein, carbs, fat,
     bmr: Math.round(bmr / 10) * 10,
     maintenance: Math.round(maintenance / 10) * 10,
     flooredAtBmr, activity, goal, balance,
+    mode: fitness ? 'fitness' : 'everyday',
+    lowCarb,
     proteinPerKg: protein / p.weightKg,
     bmi: bmi(p.weightKg, p.heightCm),
   };
