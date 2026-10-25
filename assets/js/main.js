@@ -1,7 +1,7 @@
 // Nourished by Sixto Carreon: app start-up, sign-up gate, routing and overview.
 
 import * as store from './store.js';
-import { $, $$, h, fmt, toast, confirmDialog, openDialog, dateKey } from './ui.js';
+import { $, $$, h, fmt, toast, confirmDialog, dateKey } from './ui.js';
 import { renderPlate, partsFromGrams, healthyPlate } from './plate.js';
 import { computeTargets, EXAMPLE_PROFILE } from './calc.js';
 import { initCalculator, savedTargets } from './calculator.js';
@@ -64,38 +64,56 @@ function initGate() {
 }
 
 function enter(email, subscribe) {
-  store.update((s) => { s.member = { email, since: new Date().toISOString() }; });
+  store.update((s) => { s.member = { email, since: new Date().toISOString(), confirmPending: !!subscribe }; });
   startApp();
-  if (subscribe) openSubscription(email);
-  else toast('Welcome back to the table.');
+  if (subscribe) {
+    subscribeInBackground(email);
+    toast('Welcome to the table. Check your inbox to confirm your subscription.');
+  } else {
+    toast('Welcome back to the table.');
+  }
 }
 
 /**
- * WordPress.com's own subscription page for sixtocarreon.com, the same one the main site uses.
- * WordPress.com doesn't allow it inside a frame on other sites, so it opens in its own window.
+ * Sends the sign-up to WordPress.com, which runs the sixtocarreon.com newsletter, without
+ * leaving the app. This is the same request the subscribe form on sixtocarreon.com makes;
+ * WordPress.com then emails the visitor a link to confirm. The response can't be read from
+ * here, so the overview keeps a "confirm here" link as a fallback.
  */
+function subscribeInBackground(email) {
+  const body = new URLSearchParams({
+    action: 'subscribe', blog_id: BLOG_ID, email,
+    source: `${location.origin}${location.pathname}`, 'sub-type': 'subscribe-block',
+    app_source: 'nourished', redirect_fragment: 'subscribe-blog', lang: 'en',
+  });
+  try {
+    fetch('https://wordpress.com/email-subscriptions', { method: 'POST', mode: 'no-cors', credentials: 'omit', keepalive: true, body }).catch(() => {});
+  } catch { /* the overview link covers this */ }
+}
+
+/** WordPress.com's own subscription page for sixtocarreon.com, used as the manual fallback. */
 export function subscribeUrl(email) {
   const params = new URLSearchParams({
     email, blog: BLOG_ID, plan: 'newsletter', source: 'jetpack_subscribe', app_source: 'nourished',
-    post_access_level: 'everybody', display: 'alternate', lang: 'en',
+    post_access_level: 'everybody', lang: 'en',
   });
   return `https://subscribe.wordpress.com/memberships/?${params}`;
 }
 
-function openSubscription(email) {
-  const url = subscribeUrl(email);
-  let win = null;
-  try { win = window.open(url, 'nourished-subscribe', 'popup=yes,width=480,height=720'); } catch { win = null; }
-  if (win) {
-    toast('Confirm your subscription in the WordPress.com window. Nourished is open for you.');
-    return;
-  }
-  // pop-up blocked: offer the same page as a link
-  const dlg = $('#sub-dialog');
-  $('#sub-link').href = url;
-  $('#sub-link').onclick = () => setTimeout(() => dlg.close(), 100);
-  openDialog(dlg);
-  $('#sub-link').focus();
+function renderNotice() {
+  const box = $('#ov-notice');
+  const m = store.get().member;
+  if (!m || !m.confirmPending) { box.replaceChildren(); box.hidden = true; return; }
+  box.hidden = false;
+  box.replaceChildren(
+    h('div', {},
+      h('strong', { text: 'Check your inbox to finish subscribing.' }),
+      h('p', {}, `WordPress.com, which sends the sixtocarreon.com newsletter, has emailed ${m.email} a link to confirm. No email after a few minutes? `,
+        h('a', { href: subscribeUrl(m.email), target: '_blank', rel: 'noopener', text: 'Confirm with WordPress.com ↗' }))),
+    h('button', {
+      type: 'button', class: 'link-btn', 'aria-label': 'Dismiss this message',
+      onclick: () => store.update((s) => { if (s.member) s.member.confirmPending = false; }),
+    }, 'Done'));
 }
 
 // ---------- app ----------
@@ -148,6 +166,7 @@ function route() {
 
 // ---------- overview ----------
 function renderOverview() {
+  renderNotice();
   const mine = savedTargets();
   const t = mine || computeTargets(EXAMPLE_PROFILE);
   renderPlate($('#ov-plate'), {

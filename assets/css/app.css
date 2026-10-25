@@ -278,6 +278,9 @@ legend { padding: 0; margin-bottom: 8px; }
 .dot-fat { background: var(--fat); }
 
 /* ---------- Overview ---------- */
+.ov-notice { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; background: var(--olive-wash); border-radius: 16px; padding: 16px 18px; margin-bottom: clamp(24px, 4vw, 36px); }
+.ov-notice p { margin: 4px 0 0; color: var(--muted); font-size: 0.93rem; }
+.ov-notice a { font-weight: 600; }
 .hero { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: clamp(24px, 5vw, 64px); align-items: center; }
 .hero .actions { margin-top: 28px; }
 .hero-plate { margin: 0; }
