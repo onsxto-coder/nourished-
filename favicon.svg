@@ -1,7 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <circle cx="32" cy="32" r="31" fill="#E5D2BB"/>
-  <circle cx="32" cy="32" r="25" fill="#FFFDF8"/>
-  <path d="M32 32 L32 11 A21 21 0 0 1 32 53 Z" fill="#777354"/>
-  <path d="M32 32 L32 53 A21 21 0 0 1 11 32 Z" fill="#B85C3F"/>
-  <path d="M32 32 L11 32 A21 21 0 0 1 32 11 Z" fill="#C4973F"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><title>Nourished</title><rect width="64" height="64" rx="19" fill="#193c2e"/><path d="M32 45V29" fill="none" stroke="#dbeabd" stroke-width="3" stroke-linecap="round"/><path d="M31 33C17 33 15 25 17 16c10 0 18 4 14 17Z" fill="#a6c984"/><path d="M33 28c-1-12 6-17 17-17 1 12-5 20-17 17Z" fill="#dbeabd"/><path d="m23 24 9 10m0-6 10-9" fill="none" stroke="#193c2e" stroke-width="1.8" stroke-linecap="round"/><path d="M16 40c1 9 7 14 16 14s15-5 16-14" fill="none" stroke="#dbeabd" stroke-width="3" stroke-linecap="round"/></svg>

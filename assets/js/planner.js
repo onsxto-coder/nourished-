@@ -263,6 +263,7 @@ function openPicker(key, mealId) {
   let tab = 'recipes';
 
   const body = h('div');
+  let focusTarget = null;
   const draw = () => {
     const recipes = [...store.get().recipes].sort((a, b) => (b.updated || '').localeCompare(a.updated || ''));
     const tabs = h('div', { class: 'pick-tabs', role: 'group', 'aria-label': 'Add from' },
@@ -289,7 +290,7 @@ function openPicker(key, mealId) {
       search.addEventListener('input', fill);
       fill();
       panel = h('div', {}, search, list);
-      setTimeout(() => search.focus(), 30);
+      focusTarget = search;
     } else {
       const err = h('p', { class: 'field-error', role: 'alert' });
       const f = h('form', { class: 'stack', novalidate: true },
@@ -308,12 +309,13 @@ function openPicker(key, mealId) {
         toast(`Added to ${meal.label.toLowerCase()}.`);
       });
       panel = f;
-      setTimeout(() => f.querySelector('#qa-name').focus(), 30);
+      focusTarget = f.querySelector('#qa-name');
     }
     body.replaceChildren(
       h('h2', { id: 'pk-title', text: `Add to ${meal.label.toLowerCase()}` }),
       h('p', { class: 'fine', text: longDate(fromKey(key)) }),
       tabs, panel);
+    if (body.isConnected) focusTarget?.focus();
   };
 
   const pick = (r) => {
@@ -327,4 +329,5 @@ function openPicker(key, mealId) {
   draw();
   $('#pk-body').replaceChildren(body);
   openDialog(dlg);
+  focusTarget?.focus();
 }
