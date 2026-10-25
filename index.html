@@ -561,14 +561,15 @@
   </div>
 
   <!-- Dialogs -->
-  <dialog id="sub-dialog" class="sub-dialog" aria-label="Confirm your subscription">
-    <div class="sub-dialog-bar">
-      <span>Subscribing with WordPress.com</span>
-      <button class="icon-btn" type="button" data-close aria-label="Close">×</button>
-    </div>
-    <div class="sub-dialog-body">
-      <p class="status" id="sub-dialog-status">Loading the sign-up…</p>
-      <p class="fine" id="sub-dialog-fallback" hidden>The sign-up didn't load. You can <a href="https://sixtocarreon.com/filipino-meal-plan/" rel="noopener" target="_blank">subscribe on sixtocarreon.com</a> instead. Nourished is already open for you.</p>
+  <dialog id="sub-dialog" class="dialog" aria-labelledby="sub-title">
+    <button class="icon-btn dialog-x" type="button" data-close aria-label="Close">×</button>
+    <div class="stack">
+      <h2 id="sub-title">One last step</h2>
+      <p>Confirm your subscription with WordPress.com, which sends the sixtocarreon.com newsletter. Nourished is already open for you.</p>
+      <div class="actions">
+        <a class="btn btn-primary" id="sub-link" href="https://sixtocarreon.com/filipino-meal-plan/" target="_blank" rel="noopener">Confirm with WordPress.com&nbsp;↗</a>
+        <button class="btn btn-ghost" type="button" data-close>Later</button>
+      </div>
     </div>
   </dialog>
 

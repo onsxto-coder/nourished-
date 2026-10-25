@@ -1,7 +1,7 @@
 // Nourished by Sixto Carreon: app start-up, sign-up gate, routing and overview.
 
 import * as store from './store.js';
-import { $, $$, h, fmt, toast, confirmDialog, dateKey } from './ui.js';
+import { $, $$, h, fmt, toast, confirmDialog, openDialog, dateKey } from './ui.js';
 import { renderPlate, partsFromGrams, healthyPlate } from './plate.js';
 import { computeTargets, EXAMPLE_PROFILE } from './calc.js';
 import { initCalculator, savedTargets } from './calculator.js';
@@ -70,39 +70,32 @@ function enter(email, subscribe) {
   else toast('Welcome back to the table.');
 }
 
-/** WordPress.com's own subscription window, the same one sixtocarreon.com uses. */
-function openSubscription(email) {
-  const dlg = $('#sub-dialog');
-  const body = dlg.querySelector('.sub-dialog-body');
-  body.querySelector('iframe')?.remove();
-  const status = $('#sub-dialog-status');
-  const fallback = $('#sub-dialog-fallback');
-  status.hidden = false;
-  fallback.hidden = true;
-
+/**
+ * WordPress.com's own subscription page for sixtocarreon.com, the same one the main site uses.
+ * WordPress.com doesn't allow it inside a frame on other sites, so it opens in its own window.
+ */
+export function subscribeUrl(email) {
   const params = new URLSearchParams({
     email, blog: BLOG_ID, plan: 'newsletter', source: 'jetpack_subscribe', app_source: 'nourished',
     post_access_level: 'everybody', display: 'alternate', lang: 'en',
   });
-  const iframe = h('iframe', { src: `https://subscribe.wordpress.com/memberships/?${params}`, title: 'Subscribe to the sixtocarreon.com newsletter', allow: 'payment *' });
-  const timer = setTimeout(() => { status.hidden = true; fallback.hidden = false; }, 12000);
-  iframe.addEventListener('load', () => { clearTimeout(timer); status.hidden = true; });
-  body.append(iframe);
+  return `https://subscribe.wordpress.com/memberships/?${params}`;
+}
 
-  const onMessage = (ev) => {
-    if (ev.origin !== 'https://subscribe.wordpress.com') return;
-    let data = ev.data;
-    if (typeof data === 'string') { try { data = JSON.parse(data); } catch { return; } }
-    if (data && data.action === 'close') dlg.close();
-  };
-  window.addEventListener('message', onMessage);
-  dlg.addEventListener('close', () => {
-    window.removeEventListener('message', onMessage);
-    clearTimeout(timer);
-    toast('Welcome to the table. Check your inbox to confirm your subscription.');
-  }, { once: true });
-  dlg.querySelector('[data-close]').onclick = () => dlg.close();
-  dlg.showModal();
+function openSubscription(email) {
+  const url = subscribeUrl(email);
+  let win = null;
+  try { win = window.open(url, 'nourished-subscribe', 'popup=yes,width=480,height=720'); } catch { win = null; }
+  if (win) {
+    toast('Confirm your subscription in the WordPress.com window. Nourished is open for you.');
+    return;
+  }
+  // pop-up blocked: offer the same page as a link
+  const dlg = $('#sub-dialog');
+  $('#sub-link').href = url;
+  $('#sub-link').onclick = () => setTimeout(() => dlg.close(), 100);
+  openDialog(dlg);
+  $('#sub-link').focus();
 }
 
 // ---------- app ----------

@@ -395,15 +395,6 @@ legend { padding: 0; margin-bottom: 8px; }
 .pick-list li { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--sand); }
 .pick-list .meta { color: var(--muted); font-size: 0.85rem; }
 
-/* subscription dialog */
-.sub-dialog { border: 0; padding: 0; width: min(520px, calc(100vw - 16px)); height: min(680px, calc(100dvh - 24px)); border-radius: 20px; overflow: hidden; background: var(--ivory); box-shadow: 0 24px 60px rgba(43, 33, 29, .3); }
-.sub-dialog::backdrop { background: rgba(43, 33, 29, .5); }
-.sub-dialog[open] { display: flex; flex-direction: column; }
-.sub-dialog-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px 10px 18px; border-bottom: 1px solid var(--sand); font-weight: 600; font-size: 0.92rem; }
-.sub-dialog-body { position: relative; flex: 1; display: flex; flex-direction: column; }
-.sub-dialog-body > p { padding: 18px 18px 0; }
-.sub-dialog iframe { border: 0; width: 100%; flex: 1; background: #fff; }
-
 /* ---------- Recipe lab ---------- */
 .lab-layout { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(18px, 3vw, 28px); align-items: start; }
 .lab-left { display: grid; gap: clamp(18px, 3vw, 28px); }
