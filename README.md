@@ -36,4 +36,4 @@ No build step: edit a file, commit, and GitHub Pages publishes it within a minut
 
 ## Hosting
 
-GitHub Pages from the `main` branch, custom domain `app.sixtocarreon.com` (`CNAME` file). DNS for sixtocarreon.com is on WordPress.com: `app` is a CNAME to `onsxto-coder.github.io`.
+GitHub Pages from the `main` branch of `onsxto-coder/nourished-`, custom domain `app.sixtocarreon.com` (`CNAME` file). DNS for sixtocarreon.com is on WordPress.com: `app` is a CNAME to `onsxto-coder.github.io`.

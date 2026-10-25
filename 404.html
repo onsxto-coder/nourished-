@@ -7,7 +7,8 @@
 <meta name="robots" content="noindex">
 <script>
   // Nourished is a single page. Send any old or mistyped address to the app.
-  var base = location.hostname.endsWith('github.io') ? '/nourished/' : '/';
+  var first = location.pathname.split('/')[1];
+  var base = location.hostname.endsWith('github.io') && first ? '/' + first + '/' : '/';
   location.replace(base + location.hash);
 </script>
 </head>
