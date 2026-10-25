@@ -1,4 +1,4 @@
-# Nourished by Sixto Carreon
+# nourished by Sixto Carreon
 
 Sixto Carreon's free everyday nutrition toolkit, live at **https://app.sixtocarreon.com**.
 

@@ -1,4 +1,4 @@
-// Small DOM and formatting helpers shared across Nourished.
+// Small DOM and formatting helpers shared across nourished.
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];

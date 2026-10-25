@@ -1,4 +1,4 @@
-// The plate: Nourished's signature graphic. A ceramic plate whose inner ring
+// The plate: nourished's signature graphic. A ceramic plate whose inner ring
 // shows how the day's energy splits between carbohydrates, protein and fat.
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -22,13 +22,13 @@ function base(label) {
   svg.append(title);
   const defs = s('defs');
   const g = s('radialGradient', { id, cx: '50%', cy: '45%', r: '60%' });
-  g.append(s('stop', { offset: '70%', 'stop-color': '#F1E6D7' }), s('stop', { offset: '100%', 'stop-color': '#E2CFB7' }));
+  g.append(s('stop', { offset: '70%', 'stop-color': '#EEF2E4' }), s('stop', { offset: '100%', 'stop-color': '#D6E0C6' }));
   defs.append(g);
   svg.append(defs);
   svg.append(s('circle', { cx: 100, cy: 100, r: 98, fill: `url(#${id})` }));
-  svg.append(s('circle', { cx: 100, cy: 100, r: 84, fill: '#FFFDF8', stroke: '#E5D2BB', 'stroke-width': 1 }));
-  svg.append(s('circle', { cx: 100, cy: 100, r: 80, fill: 'none', stroke: '#F3EADF', 'stroke-width': 1 }));
-  svg.append(s('circle', { cx: 100, cy: 100, r: R, fill: 'none', stroke: '#EFE3D3', 'stroke-width': 13, class: 'track' }));
+  svg.append(s('circle', { cx: 100, cy: 100, r: 84, fill: '#FCFDF7', stroke: '#DCE3D0', 'stroke-width': 1 }));
+  svg.append(s('circle', { cx: 100, cy: 100, r: 80, fill: 'none', stroke: '#EEF2E6', 'stroke-width': 1 }));
+  svg.append(s('circle', { cx: 100, cy: 100, r: R, fill: 'none', stroke: '#E9EEDF', 'stroke-width': 13, class: 'track' }));
   const ring = s('g', { transform: 'rotate(-90 100 100)', class: 'ring' });
   svg.append(ring);
   const big = s('text', { x: 100, y: 101, 'text-anchor': 'middle', class: 'plate-big', 'font-size': 30 });
@@ -88,18 +88,18 @@ export function healthyPlate(container) {
   const t = s('title');
   t.textContent = 'A plate split into half fruit and vegetables, a quarter wholegrains and a quarter protein';
   svg.append(t);
-  svg.append(s('circle', { cx: 100, cy: 100, r: 98, fill: '#E9DAC6' }));
-  svg.append(s('circle', { cx: 100, cy: 100, r: 86, fill: '#FFFDF8', stroke: '#E5D2BB' }));
+  svg.append(s('circle', { cx: 100, cy: 100, r: 98, fill: '#DCE6CB' }));
+  svg.append(s('circle', { cx: 100, cy: 100, r: 86, fill: '#FCFDF7', stroke: '#D5DECA' }));
   const r = 76;
   const wedge = (a0, a1, fill) => {
     const p = (a) => [100 + r * Math.cos((a - 90) * Math.PI / 180), 100 + r * Math.sin((a - 90) * Math.PI / 180)];
     const [x0, y0] = p(a0); const [x1, y1] = p(a1);
     const large = a1 - a0 > 180 ? 1 : 0;
-    return s('path', { d: `M100 100 L${x0} ${y0} A${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`, fill, stroke: '#FFFDF8', 'stroke-width': 3 });
+    return s('path', { d: `M100 100 L${x0} ${y0} A${r} ${r} 0 ${large} 1 ${x1} ${y1} Z`, fill, stroke: '#FCFDF7', 'stroke-width': 3 });
   };
-  svg.append(wedge(0, 180, '#777354'), wedge(180, 270, '#C4973F'), wedge(270, 360, '#B85C3F'));
+  svg.append(wedge(0, 180, '#5E9E54'), wedge(180, 270, '#D2A447'), wedge(270, 360, '#9B3F5E'));
   const label = (x, y, text) => {
-    const el = s('text', { x, y, 'text-anchor': 'middle', fill: '#FFFDF8', 'font-size': 14, 'font-weight': 700, 'font-family': 'Inter, sans-serif' });
+    const el = s('text', { x, y, 'text-anchor': 'middle', fill: '#FCFDF7', 'font-size': 14, 'font-weight': 700, 'font-family': 'Inter, sans-serif' });
     el.textContent = text;
     return el;
   };
@@ -109,7 +109,7 @@ export function healthyPlate(container) {
   container.replaceChildren(svg);
 }
 
-export const MACRO_COLORS = { carbs: '#777354', protein: '#8F3F2B', fat: '#C4973F' };
+export const MACRO_COLORS = { carbs: '#D2A447', protein: '#9B3F5E', fat: '#5F9447' };
 
 /** Convenience: parts from grams. */
 export const partsFromGrams = ({ carbs = 0, protein = 0, fat = 0 }) => [

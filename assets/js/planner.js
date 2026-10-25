@@ -149,7 +149,7 @@ function renderSummary() {
     label: `${fmt.int(t.kcal)} kcal planned${target ? ` of ${fmt.int(target.kcal)}` : ''}`,
   });
   const rows = [
-    ['Energy', t.kcal, target?.kcal, 'kcal', '#B85C3F'],
+    ['Energy', t.kcal, target?.kcal, 'kcal', '#2E6B4E'],
     ['Carbohydrates', t.carbs, target?.carbs, 'g', MACRO_COLORS.carbs],
     ['Protein', t.protein, target?.protein, 'g', MACRO_COLORS.protein],
     ['Fat', t.fat, target?.fat, 'g', MACRO_COLORS.fat],

@@ -1,4 +1,4 @@
-// Everything Nourished saves lives in this browser's localStorage under one key.
+// Everything nourished saves lives in this browser's localStorage under one key.
 
 const KEY = 'nourished.v2';
 const VERSION = 2;
@@ -61,7 +61,7 @@ export function subscribe(cb) { listeners.add(cb); return () => listeners.delete
 
 export function exportData() {
   const { member, ...rest } = state;
-  return { app: 'Nourished by Sixto Carreon', exported: new Date().toISOString(), ...rest };
+  return { app: 'nourished by Sixto Carreon', exported: new Date().toISOString(), ...rest };
 }
 
 export function importData(obj) {

@@ -163,7 +163,7 @@ function renderSkeleton() {
     h('li', { class: 'recipe-card skeleton', 'aria-hidden': 'true' }, h('div', { class: 'thumb' }), h('div', { class: 'bar' }), h('div', { class: 'bar', style: 'width:45%' }))));
 }
 
-const PLATE_ICON = '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#E5D2BB"/><circle cx="32" cy="32" r="22" fill="#FFFDF8"/></svg>';
+const PLATE_ICON = '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#DCE3D0"/><circle cx="32" cy="32" r="22" fill="#FCFDF7"/></svg>';
 
 function thumb(image, alt = '') {
   const t = h('div', { class: 'thumb' });

@@ -1,4 +1,4 @@
-// Nourished by Sixto Carreon: app start-up, sign-up gate, routing and overview.
+// nourished by Sixto Carreon: app start-up, sign-up gate, routing and overview.
 
 import * as store from './store.js';
 import { $, $$, h, fmt, toast, confirmDialog, dateKey } from './ui.js';
@@ -17,9 +17,9 @@ const VIEWS = {
   'recipe-lab': 'Recipe lab',
   planner: 'Planner',
   guide: "The chef's guide",
-  about: 'How Nourished works',
+  about: 'How nourished works',
 };
-const ANCHORS = { method: 'about', sources: 'about', privacy: 'about' };
+const ANCHORS = { method: 'about', privacy: 'about' };
 const ALIASES = { '': 'overview', home: 'overview', targets: 'calculator', bmi: 'calculator', recipes: 'recipe-finder', lab: 'recipe-lab', plan: 'planner' };
 
 let appStarted = false;
@@ -33,7 +33,7 @@ function showGate() {
   $('#gate').hidden = false;
   $('.skip-link').setAttribute('href', '#gate-content');
   $$('[data-healthy-plate]', $('#gate')).forEach(healthyPlate);
-  document.title = 'Nourished — Eat well. Cook with heart.';
+  document.title = 'nourished — Eat well. Cook with heart.';
 }
 
 function initGate() {
@@ -145,7 +145,7 @@ function route() {
   $$('[data-nav]').forEach((a) => {
     if (a.dataset.nav === view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
-  document.title = view === 'overview' ? 'Nourished — Eat well. Cook with heart.' : `${VIEWS[view]} · Nourished`;
+  document.title = view === 'overview' ? 'nourished — Eat well. Cook with heart.' : `${VIEWS[view]} · nourished`;
 
   if (view === 'overview') renderOverview();
   if (view === 'recipe-finder') showFinder();
@@ -221,7 +221,7 @@ function renderMember() {
 }
 
 async function forget() {
-  const ok = await confirmDialog({ title: 'Use a different email?', body: 'Nourished will ask for an email again on this device. Your saved recipes and plans stay.', ok: 'Continue', cancel: 'Cancel' });
+  const ok = await confirmDialog({ title: 'Use a different email?', body: 'nourished will ask for an email again on this device. Your saved recipes and plans stay.', ok: 'Continue', cancel: 'Cancel' });
   if (!ok) return;
   store.forgetMember();
   location.hash = '';
@@ -246,7 +246,7 @@ function initAbout() {
       const got = store.importData(obj);
       toast(`Loaded ${got.recipes.length} recipe${got.recipes.length === 1 ? '' : 's'} and ${Object.keys(got.plan).length} planned day${Object.keys(got.plan).length === 1 ? '' : 's'}.`);
     } catch {
-      toast('That file isn\'t a Nourished data file.');
+      toast('That file isn\'t a nourished data file.');
     }
   });
   $('#data-delete').addEventListener('click', async () => {
@@ -262,7 +262,7 @@ function boot() {
   initGate();
   if (store.get().member) startApp();
   else showGate();
-  if (store.isMemoryOnly()) toast('This browser isn\'t letting Nourished save, so changes last until you close the tab.');
+  if (store.isMemoryOnly()) toast('This browser isn\'t letting nourished save, so changes last until you close the tab.');
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
